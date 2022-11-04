@@ -43,6 +43,7 @@ async function bootstrap() {
     const { title } = createPoolBody.parse(request.body);
     const generate = new ShortUniqueId({ length: 6 });
     const code = String(generate()).toUpperCase();
+    console.log("CODIGO", code);
 
     await prisma.pool.create({
       data: {
@@ -51,7 +52,7 @@ async function bootstrap() {
       },
     });
 
-    return reply.status(201).send({ title });
+    return reply.status(201).send({ title, code });
   });
 
   await fastify.listen({
