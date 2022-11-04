@@ -1,12 +1,12 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
-import { z } from "zod";
-import { PrismaClient } from "@prisma/client";
-import ShortUniqueId from "short-unique-id";
+import jwt from "@fastify/jwt";
 
-const prisma = new PrismaClient({
-  log: ["query"],
-});
+import { pollRoutes } from "./routes/poll";
+import { userRoutes } from "./routes/user";
+import { guessRoutes } from "./routes/guess";
+import { authRoutes } from "./routes/auth";
+import { gameRoutes } from "./routes/game";
 
 async function bootstrap() {
   const fastify = Fastify({
@@ -17,43 +17,15 @@ async function bootstrap() {
     origin: true,
   });
 
-  fastify.get("/polls/count", async () => {
-    const count = await prisma.poll.count();
-
-    return { count };
+  await fastify.register(jwt, {
+    secret: "hash-nlw-copa",
   });
 
-  fastify.get("/users/count", async () => {
-    const count = await prisma.user.count();
-
-    return { count };
-  });
-
-  fastify.get("/guesses/count", async () => {
-    const count = await prisma.guess.count();
-
-    return { count };
-  });
-
-  fastify.post("/polls", async (request, reply) => {
-    const createPollBody = z.object({
-      title: z.string(),
-    });
-
-    const { title } = createPollBody.parse(request.body);
-    const generate = new ShortUniqueId({ length: 6 });
-    const code = String(generate()).toUpperCase();
-    console.log("CODIGO", code);
-
-    await prisma.poll.create({
-      data: {
-        title,
-        code,
-      },
-    });
-
-    return reply.status(201).send({ title, code });
-  });
+  fastify.register(authRoutes);
+  fastify.register(pollRoutes);
+  fastify.register(userRoutes);
+  fastify.register(guessRoutes);
+  fastify.register(gameRoutes);
 
   await fastify.listen({
     port: 3333,
