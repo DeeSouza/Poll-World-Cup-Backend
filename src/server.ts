@@ -1,12 +1,12 @@
-import Fastify from "fastify";
-import cors from "@fastify/cors";
-import jwt from "@fastify/jwt";
+import Fastify from 'fastify';
+import cors from '@fastify/cors';
+import jwt from '@fastify/jwt';
 
-import { pollRoutes } from "./routes/poll";
-import { userRoutes } from "./routes/user";
-import { guessRoutes } from "./routes/guess";
-import { authRoutes } from "./routes/auth";
-import { gameRoutes } from "./routes/game";
+import { pollRoutes } from './routes/poll';
+import { userRoutes } from './routes/user';
+import { guessRoutes } from './routes/guess';
+import { authRoutes } from './routes/auth';
+import { gameRoutes } from './routes/game';
 
 async function bootstrap() {
   const fastify = Fastify({
@@ -18,7 +18,7 @@ async function bootstrap() {
   });
 
   await fastify.register(jwt, {
-    secret: "hash-nlw-copa",
+    secret: 'hash-nlw-copa',
   });
 
   fastify.register(authRoutes);
@@ -29,7 +29,7 @@ async function bootstrap() {
 
   await fastify.listen({
     port: 3333,
-    host: "0.0.0.0",
+    host: '0.0.0.0',
   });
 }
 
